@@ -1,0 +1,543 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>System.IO.Pipelines</name>
+    </assembly>
+    <members>
+        <member name="T:System.Threading.Tasks.TaskToApm">
+            <summary>
+            Provides support for efficiently using Tasks to implement the APM (Begin/End) pattern.
+            </summary>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskToApm.Begin(System.Threading.Tasks.Task,System.AsyncCallback,System.Object)">
+            <summary>
+            Marshals the Task as an IAsyncResult, using the supplied callback and state
+            to implement the APM pattern.
+            </summary>
+            <param name="task">The Task to be marshaled.</param>
+            <param name="callback">The callback to be invoked upon completion.</param>
+            <param name="state">The state to be stored in the IAsyncResult.</param>
+            <returns>An IAsyncResult to represent the task's asynchronous operation.</returns>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskToApm.End(System.IAsyncResult)">
+            <summary>Processes an IAsyncResult returned by Begin.</summary>
+            <param name="asyncResult">The IAsyncResult to unwrap.</param>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskToApm.End``1(System.IAsyncResult)">
+            <summary>Processes an IAsyncResult returned by Begin.</summary>
+            <param name="asyncResult">The IAsyncResult to unwrap.</param>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskToApm.InvokeCallbackWhenTaskCompletes(System.Threading.Tasks.Task,System.AsyncCallback,System.IAsyncResult)">
+            <summary>Invokes the callback asynchronously when the task has completed.</summary>
+            <param name="antecedent">The Task to await.</param>
+            <param name="callback">The callback to invoke when the Task completes.</param>
+            <param name="asyncResult">The Task used as the IAsyncResult.</param>
+        </member>
+        <member name="T:System.Threading.Tasks.TaskToApm.TaskWrapperAsyncResult">
+            <summary>
+            Provides a simple IAsyncResult that wraps a Task.  This, in effect, allows
+            for overriding what's seen for the CompletedSynchronously and AsyncState values.
+            </summary>
+        </member>
+        <member name="F:System.Threading.Tasks.TaskToApm.TaskWrapperAsyncResult.Task">
+            <summary>The wrapped Task.</summary>
+        </member>
+        <member name="F:System.Threading.Tasks.TaskToApm.TaskWrapperAsyncResult._state">
+            <summary>The new AsyncState value.</summary>
+        </member>
+        <member name="F:System.Threading.Tasks.TaskToApm.TaskWrapperAsyncResult._completedSynchronously">
+            <summary>The new CompletedSynchronously value.</summary>
+        </member>
+        <member name="M:System.Threading.Tasks.TaskToApm.TaskWrapperAsyncResult.#ctor(System.Threading.Tasks.Task,System.Object,System.Boolean)">
+            <summary>Initializes the IAsyncResult with the Task to wrap and the overriding AsyncState and CompletedSynchronously values.</summary>
+            <param name="task">The Task to wrap.</param>
+            <param name="state">The new AsyncState value</param>
+            <param name="completedSynchronously">The new CompletedSynchronously value.</param>
+        </member>
+        <member name="P:System.IO.Pipelines.BufferSegment.End">
+            <summary>
+            The End represents the offset into AvailableMemory where the range of "active" bytes ends. At the point when the block is leased
+            the End is guaranteed to be equal to Start. The value of Start may be assigned anywhere between 0 and
+            Buffer.Length, and must be equal to or less than End.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.BufferSegment.NextSegment">
+            <summary>
+            Reference to the next block of data when the overall "active" bytes spans multiple blocks. At the point when the block is
+            leased Next is guaranteed to be null. Start, End, and Next are used together in order to create a linked-list of discontiguous
+            working memory. The "active" memory is grown when bytes are copied in, End is increased, and Next is assigned. The "active"
+            memory is shrunk when bytes are consumed, Start is increased, and blocks are returned to the pool.
+            </summary>
+        </member>
+        <member name="T:System.IO.Pipelines.FlushResult">
+            <summary>
+            Result returned by <see cref="M:System.IO.Pipelines.PipeWriter.FlushAsync(System.Threading.CancellationToken)"/> call
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.FlushResult.#ctor(System.Boolean,System.Boolean)">
+            <summary>
+            Creates a new instance of <see cref="T:System.IO.Pipelines.FlushResult"/> setting <see cref="P:System.IO.Pipelines.FlushResult.IsCanceled"/> and <see cref="P:System.IO.Pipelines.FlushResult.IsCompleted"/> flags
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.FlushResult.IsCanceled">
+            <summary>
+            True if the current <see cref="M:System.IO.Pipelines.PipeWriter.FlushAsync(System.Threading.CancellationToken)"/> operation was canceled, otherwise false.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.FlushResult.IsCompleted">
+            <summary>
+            True if the <see cref="T:System.IO.Pipelines.PipeWriter"/> is complete otherwise false
+            </summary>
+        </member>
+        <member name="T:System.IO.Pipelines.IDuplexPipe">
+            <summary>
+            Defines a class that provides a duplex pipe from which data can be read from and written to.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.IDuplexPipe.Input">
+            <summary>
+            Gets the <see cref="T:System.IO.Pipelines.PipeReader"/> half of the duplex pipe.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.IDuplexPipe.Output">
+            <summary>
+            Gets the <see cref="T:System.IO.Pipelines.PipeWriter"/> half of the duplex pipe.
+            </summary>
+        </member>
+        <member name="T:System.IO.Pipelines.BufferSegmentStack.SegmentAsValueType">
+            <summary>
+            A simple struct we wrap reference types inside when storing in arrays to
+            bypass the CLR's covariant checks when writing to arrays.
+            </summary>
+            <remarks>
+            We use <see cref="T:System.IO.Pipelines.BufferSegmentStack.SegmentAsValueType"/> as a wrapper to avoid paying the cost of covariant checks whenever
+            the underlying array that the <see cref="T:System.IO.Pipelines.BufferSegmentStack"/> class uses is written to. 
+            We've recognized this as a perf win in ETL traces for these stack frames:
+            clr!JIT_Stelem_Ref
+              clr!ArrayStoreCheck
+                clr!ObjIsInstanceOf
+            </remarks>
+        </member>
+        <member name="T:System.IO.Pipelines.Pipe">
+            <summary>
+            Default <see cref="T:System.IO.Pipelines.PipeWriter"/> and <see cref="T:System.IO.Pipelines.PipeReader"/> implementation.
+            </summary>
+            <summary>
+            Default <see cref="T:System.IO.Pipelines.PipeWriter"/> and <see cref="T:System.IO.Pipelines.PipeReader"/> implementation.
+            </summary>
+            <summary>
+            Default <see cref="T:System.IO.Pipelines.PipeWriter"/> and <see cref="T:System.IO.Pipelines.PipeReader"/> implementation.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.Pipe.#ctor">
+            <summary>
+            Initializes the <see cref="T:System.IO.Pipelines.Pipe"/> using <see cref="P:System.IO.Pipelines.PipeOptions.Default"/> as options.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.Pipe.#ctor(System.IO.Pipelines.PipeOptions)">
+            <summary>
+            Initializes the <see cref="T:System.IO.Pipelines.Pipe"/> with the specified <see cref="T:System.IO.Pipelines.PipeOptions"/>.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.Pipe.Reader">
+            <summary>
+            Gets the <see cref="T:System.IO.Pipelines.PipeReader"/> for this pipe.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.Pipe.Writer">
+            <summary>
+            Gets the <see cref="T:System.IO.Pipelines.PipeWriter"/> for this pipe.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.Pipe.Reset">
+            <summary>
+            Resets the pipe
+            </summary>
+        </member>
+        <member name="T:System.IO.Pipelines.PipeOptions">
+            <summary>
+            Represents a set of <see cref="T:System.IO.Pipelines.Pipe"/> options.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.PipeOptions.Default">
+            <summary>
+            Default instance of <see cref="T:System.IO.Pipelines.PipeOptions"/>.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeOptions.#ctor(System.Buffers.MemoryPool{System.Byte},System.IO.Pipelines.PipeScheduler,System.IO.Pipelines.PipeScheduler,System.Int64,System.Int64,System.Int32,System.Boolean)">
+            <summary>
+            Creates a new instance of <see cref="T:System.IO.Pipelines.PipeOptions"/>
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.PipeOptions.UseSynchronizationContext">
+            <summary>
+            Gets a value that determines if asynchronous callbacks should be executed on the <see cref="T:System.Threading.SynchronizationContext" /> they were captured on.
+            This takes precedence over the schedulers specified in <see cref="P:System.IO.Pipelines.PipeOptions.ReaderScheduler"/> and <see cref="P:System.IO.Pipelines.PipeOptions.WriterScheduler"/>.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.PipeOptions.PauseWriterThreshold">
+            <summary>
+            Gets amount of bytes in <see cref="T:System.IO.Pipelines.Pipe"/> when <see cref="M:System.IO.Pipelines.PipeWriter.FlushAsync(System.Threading.CancellationToken)"/> starts blocking
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.PipeOptions.ResumeWriterThreshold">
+            <summary>
+            Gets amount of bytes in <see cref="T:System.IO.Pipelines.Pipe"/> when <see cref="M:System.IO.Pipelines.PipeWriter.FlushAsync(System.Threading.CancellationToken)"/> stops blocking
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.PipeOptions.MinimumSegmentSize">
+            <summary>
+            Gets minimum size of segment requested from <see cref="P:System.IO.Pipelines.PipeOptions.Pool"/>
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.PipeOptions.WriterScheduler">
+            <summary>
+            Gets the <see cref="T:System.IO.Pipelines.PipeScheduler"/> used to execute <see cref="T:System.IO.Pipelines.PipeWriter"/> callbacks
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.PipeOptions.ReaderScheduler">
+            <summary>
+            Gets the <see cref="T:System.IO.Pipelines.PipeScheduler"/> used to execute <see cref="T:System.IO.Pipelines.PipeReader"/> callbacks
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.PipeOptions.Pool">
+            <summary>
+            Gets the <see cref="T:System.Buffers.MemoryPool`1"/> instances used for buffer management
+            </summary>
+        </member>
+        <member name="T:System.IO.Pipelines.PipeReader">
+            <summary>
+            Defines a class that provides access to a read side of pipe.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeReader.TryRead(System.IO.Pipelines.ReadResult@)">
+            <summary>
+            Attempt to synchronously read data the <see cref="T:System.IO.Pipelines.PipeReader"/>.
+            </summary>
+            <param name="result">The <see cref="T:System.IO.Pipelines.ReadResult"/></param>
+            <returns>True if data was available, or if the call was canceled or the writer was completed.</returns>
+            <remarks>If the pipe returns false, there's no need to call <see cref="M:System.IO.Pipelines.PipeReader.AdvanceTo(System.SequencePosition,System.SequencePosition)"/>.</remarks>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeReader.ReadAsync(System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously reads a sequence of bytes from the current <see cref="T:System.IO.Pipelines.PipeReader"/>.
+            </summary>
+            <returns>A <see cref="T:System.Threading.Tasks.ValueTask`1"/> representing the asynchronous read operation.</returns>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeReader.AdvanceTo(System.SequencePosition)">
+            <summary>
+            Moves forward the pipeline's read cursor to after the consumed data.
+            </summary>
+            <param name="consumed">Marks the extent of the data that has been successfully processed.</param>
+            <remarks>
+            The memory for the consumed data will be released and no longer available.
+            The examined data communicates to the pipeline when it should signal more data is available.
+            </remarks>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeReader.AdvanceTo(System.SequencePosition,System.SequencePosition)">
+            <summary>
+            Moves forward the pipeline's read cursor to after the consumed data.
+            </summary>
+            <param name="consumed">Marks the extent of the data that has been successfully processed.</param>
+            <param name="examined">Marks the extent of the data that has been read and examined.</param>
+            <remarks>
+            The memory for the consumed data will be released and no longer available.
+            The examined data communicates to the pipeline when it should signal more data is available.
+            </remarks>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeReader.AsStream">
+            <summary>
+            Returns a <see cref="T:System.IO.Stream"/> that wraps the <see cref="T:System.IO.Pipelines.PipeReader"/>.
+            </summary>
+            <returns>The <see cref="T:System.IO.Stream"/>.</returns>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeReader.CancelPendingRead">
+            <summary>
+            Cancel to currently pending or if none is pending next call to <see cref="M:System.IO.Pipelines.PipeReader.ReadAsync(System.Threading.CancellationToken)"/>, without completing the <see cref="T:System.IO.Pipelines.PipeReader"/>.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeReader.Complete(System.Exception)">
+            <summary>
+            Signal to the producer that the consumer is done reading.
+            </summary>
+            <param name="exception">Optional <see cref="T:System.Exception"/> indicating a failure that's causing the pipeline to complete.</param>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeReader.OnWriterCompleted(System.Action{System.Exception,System.Object},System.Object)">
+            <summary>
+            Registers a callback that gets executed when the <see cref="T:System.IO.Pipelines.PipeWriter"/> side of the pipe is completed
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeReader.Create(System.IO.Stream,System.IO.Pipelines.StreamPipeReaderOptions)">
+            <summary>
+            Creates a <see cref="T:System.IO.Pipelines.PipeReader"/> wrapping the specified <see cref="T:System.IO.Stream"/>.
+            </summary>
+            <param name="stream">The stream.</param>
+            <param name="readerOptions">The options.</param>
+            <returns>A <see cref="T:System.IO.Pipelines.PipeReader"/> that wraps the <see cref="T:System.IO.Stream"/>.</returns>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeReader.CopyToAsync(System.IO.Stream,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously reads the bytes from the <see cref="T:System.IO.Pipelines.PipeReader"/> and writes them to the specified stream, using a specified buffer size and cancellation token.
+            </summary>
+            <param name="destination">The stream to which the contents of the current stream will be copied.</param>
+            <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="P:System.Threading.CancellationToken.None"/>.</param>
+            <returns>A task that represents the asynchronous copy operation.</returns>
+        </member>
+        <member name="T:System.IO.Pipelines.PipeScheduler">
+            <summary>
+            Abstraction for running <see cref="T:System.IO.Pipelines.PipeReader"/> and <see cref="T:System.IO.Pipelines.PipeWriter"/> callbacks and continuations
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.PipeScheduler.ThreadPool">
+            <summary>
+            The <see cref="T:System.IO.Pipelines.PipeScheduler"/> implementation that queues callbacks to thread pool
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.PipeScheduler.Inline">
+            <summary>
+            The <see cref="T:System.IO.Pipelines.PipeScheduler"/> implementation that runs callbacks inline
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeScheduler.Schedule(System.Action{System.Object},System.Object)">
+            <summary>
+            Requests <paramref name="action"/> to be run on scheduler with <paramref name="state"/> being passed in
+            </summary>
+        </member>
+        <member name="T:System.IO.Pipelines.PipeWriter">
+            <summary>
+            Defines a class that provides a pipeline to which data can be written.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeWriter.Complete(System.Exception)">
+            <summary>
+            Marks the <see cref="T:System.IO.Pipelines.PipeWriter"/> as being complete, meaning no more items will be written to it.
+            </summary>
+            <param name="exception">Optional <see cref="T:System.Exception"/> indicating a failure that's causing the pipeline to complete.</param>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeWriter.CancelPendingFlush">
+            <summary>
+            Cancel the pending <see cref="M:System.IO.Pipelines.PipeWriter.FlushAsync(System.Threading.CancellationToken)"/> operation. If there is none, cancels next <see cref="M:System.IO.Pipelines.PipeWriter.FlushAsync(System.Threading.CancellationToken)"/> operation, without completing the <see cref="T:System.IO.Pipelines.PipeWriter"/>.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeWriter.OnReaderCompleted(System.Action{System.Exception,System.Object},System.Object)">
+            <summary>
+            Registers a callback that gets executed when the <see cref="T:System.IO.Pipelines.PipeReader"/> side of the pipe is completed
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeWriter.FlushAsync(System.Threading.CancellationToken)">
+            <summary>
+            Makes bytes written available to <see cref="T:System.IO.Pipelines.PipeReader"/> and runs <see cref="M:System.IO.Pipelines.PipeReader.ReadAsync(System.Threading.CancellationToken)"/> continuation.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeWriter.Advance(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.PipeWriter.GetMemory(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.PipeWriter.GetSpan(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.PipeWriter.AsStream">
+            <summary>
+            Returns a <see cref="T:System.IO.Stream"/> that wraps the <see cref="T:System.IO.Pipelines.PipeWriter"/>.
+            </summary>
+            <returns>The <see cref="T:System.IO.Stream"/>.</returns>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeWriter.Create(System.IO.Stream,System.IO.Pipelines.StreamPipeWriterOptions)">
+            <summary>
+            Creates a <see cref="T:System.IO.Pipelines.PipeWriter"/> wrapping the specified <see cref="T:System.IO.Stream"/>.
+            </summary>
+            <param name="stream">The stream.</param>
+            <param name="writerOptions">The options.</param>
+            <returns>A <see cref="T:System.IO.Pipelines.PipeWriter"/> that wraps the <see cref="T:System.IO.Stream"/>.</returns>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeWriter.WriteAsync(System.ReadOnlyMemory{System.Byte},System.Threading.CancellationToken)">
+            <summary>
+            Writes <paramref name="source"/> to the pipe and makes data accessible to <see cref="T:System.IO.Pipelines.PipeReader"/>
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.PipeWriter.CopyFromAsync(System.IO.Stream,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously reads the bytes from the specified stream and writes them to the <see cref="T:System.IO.Pipelines.PipeWriter"/>.
+            </summary>
+            <param name="source">The stream from which the contents will be copied.</param>
+            <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="P:System.Threading.CancellationToken.None"/>.</param>
+            <returns>A task that represents the asynchronous copy operation.</returns>
+        </member>
+        <member name="T:System.IO.Pipelines.ReadResult">
+            <summary>
+            The result of a <see cref="M:System.IO.Pipelines.PipeReader.ReadAsync(System.Threading.CancellationToken)"/> call.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.ReadResult.#ctor(System.Buffers.ReadOnlySequence{System.Byte},System.Boolean,System.Boolean)">
+            <summary>
+            Creates a new instance of <see cref="T:System.IO.Pipelines.ReadResult"/> setting <see cref="P:System.IO.Pipelines.ReadResult.IsCanceled"/> and <see cref="P:System.IO.Pipelines.ReadResult.IsCompleted"/> flags.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.ReadResult.Buffer">
+            <summary>
+            The <see cref="T:System.Buffers.ReadOnlySequence`1"/> that was read.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.ReadResult.IsCanceled">
+            <summary>
+            True if the current <see cref="M:System.IO.Pipelines.PipeReader.ReadAsync(System.Threading.CancellationToken)"/> operation was canceled, otherwise false.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.ReadResult.IsCompleted">
+            <summary>
+            True if the <see cref="T:System.IO.Pipelines.PipeReader"/> is complete.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeExtensions.CopyToAsync(System.IO.Stream,System.IO.Pipelines.PipeWriter,System.Threading.CancellationToken)">
+            <summary>
+            Asynchronously reads the bytes from the <see cref="T:System.IO.Stream"/> and writes them to the specified <see cref="T:System.IO.Pipelines.PipeWriter"/>, using a cancellation token.
+            </summary>
+            <param name="source">The stream from which the contents of the current stream will be copied.</param>
+            <param name="destination">The <see cref="T:System.IO.Pipelines.PipeWriter"/> to which the contents of the source stream will be copied.</param>
+            <param name="cancellationToken">The token to monitor for cancellation requests. The default value is <see cref="P:System.Threading.CancellationToken.None"/>.</param>
+            <returns>A task that represents the asynchronous copy operation.</returns>
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeReader.#ctor(System.IO.Stream,System.IO.Pipelines.StreamPipeReaderOptions)">
+            <summary>
+            Creates a new StreamPipeReader.
+            </summary>
+            <param name="readingStream">The stream to read from.</param>
+            <param name="options">The options to use.</param>
+        </member>
+        <member name="P:System.IO.Pipelines.StreamPipeReader.InnerStream">
+            <summary>
+            Gets the inner stream that is being read from.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeReader.AdvanceTo(System.SequencePosition)">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeReader.AdvanceTo(System.SequencePosition,System.SequencePosition)">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeReader.CancelPendingRead">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeReader.Complete(System.Exception)">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeReader.OnWriterCompleted(System.Action{System.Exception,System.Object},System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeReader.ReadAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:System.IO.Pipelines.StreamPipeReaderOptions">
+            <summary>
+            Represents a set of options for controlling the creation of the <see cref="T:System.IO.Pipelines.PipeReader"/>.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeReaderOptions.#ctor(System.Buffers.MemoryPool{System.Byte},System.Int32,System.Int32)">
+            <summary>
+            Creates a new instance of <see cref="T:System.IO.Pipelines.StreamPipeReaderOptions"/>.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.StreamPipeReaderOptions.BufferSize">
+            <summary>
+            The minimum buffer size to use when renting memory from the <see cref="P:System.IO.Pipelines.StreamPipeReaderOptions.Pool"/>.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.StreamPipeReaderOptions.MinimumReadSize">
+            <summary>
+            The threshold of remaining bytes in the buffer before a new buffer is allocated.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.StreamPipeReaderOptions.Pool">
+            <summary>
+            The <see cref="T:System.Buffers.MemoryPool`1"/> to use when allocating memory.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.StreamPipeWriter.InnerStream">
+            <summary>
+            Gets the inner stream that is being written to.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeWriter.Advance(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeWriter.GetMemory(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeWriter.GetSpan(System.Int32)">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeWriter.CancelPendingFlush">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeWriter.Complete(System.Exception)">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeWriter.OnReaderCompleted(System.Action{System.Exception,System.Object},System.Object)">
+            <inheritdoc />
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeWriter.FlushAsync(System.Threading.CancellationToken)">
+            <inheritdoc />
+        </member>
+        <member name="T:System.IO.Pipelines.StreamPipeWriterOptions">
+            <summary>
+            Represents a set of options for controlling the creation of the <see cref="T:System.IO.Pipelines.PipeWriter"/>.
+            </summary>
+        </member>
+        <member name="M:System.IO.Pipelines.StreamPipeWriterOptions.#ctor(System.Buffers.MemoryPool{System.Byte},System.Int32)">
+            <summary>
+            Creates a new instance of <see cref="T:System.IO.Pipelines.StreamPipeWriterOptions"/>.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.StreamPipeWriterOptions.MinimumBufferSize">
+            <summary>
+            The minimum buffer size to use when renting memory from the <see cref="P:System.IO.Pipelines.StreamPipeWriterOptions.Pool"/>.
+            </summary>
+        </member>
+        <member name="P:System.IO.Pipelines.StreamPipeWriterOptions.Pool">
+            <summary>
+            The <see cref="T:System.Buffers.MemoryPool`1"/> to use when allocating memory.
+            </summary>
+        </member>
+        <member name="P:System.SR.AdvanceToInvalidCursor">
+            <summary>The PipeReader has already advanced past the provided position.</summary>
+        </member>
+        <member name="P:System.SR.ConcurrentOperationsNotSupported">
+            <summary>Concurrent reads or writes are not supported.</summary>
+        </member>
+        <member name="P:System.SR.FlushCanceledOnPipeWriter">
+            <summary>Flush was canceled on underlying PipeWriter.</summary>
+        </member>
+        <member name="P:System.SR.GetResultBeforeCompleted">
+            <summary>Can't GetResult unless awaiter is completed.</summary>
+        </member>
+        <member name="P:System.SR.InvalidExaminedOrConsumedPosition">
+            <summary>The examined position must be greater than or equal to the consumed position.</summary>
+        </member>
+        <member name="P:System.SR.InvalidExaminedPosition">
+            <summary>The examined position cannot be less than the previously examined position.</summary>
+        </member>
+        <member name="P:System.SR.InvalidZeroByteRead">
+            <summary>The PipeReader returned 0 bytes when the ReadResult was not completed or canceled.</summary>
+        </member>
+        <member name="P:System.SR.NoReadingOperationToComplete">
+            <summary>No reading operation to complete.</summary>
+        </member>
+        <member name="P:System.SR.ReadCanceledOnPipeReader">
+            <summary>Read was canceled on underlying PipeReader.</summary>
+        </member>
+        <member name="P:System.SR.ReaderAndWriterHasToBeCompleted">
+            <summary>Both reader and writer has to be completed to be able to reset the pipe.</summary>
+        </member>
+        <member name="P:System.SR.ReadingAfterCompleted">
+            <summary>Reading is not allowed after reader was completed.</summary>
+        </member>
+        <member name="P:System.SR.ReadingIsInProgress">
+            <summary>Reading is already in progress.</summary>
+        </member>
+        <member name="P:System.SR.WritingAfterCompleted">
+            <summary>Writing is not allowed after writer was completed.</summary>
+        </member>
+    </members>
+</doc>
