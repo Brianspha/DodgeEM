@@ -14,6 +14,7 @@ TagManager:
   - Wall
   - PlayerEcho
   - GameManager
+  - Collectible
   layers:
   - Default
   - TransparentFX

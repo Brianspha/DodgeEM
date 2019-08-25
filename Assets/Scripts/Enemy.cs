@@ -9,12 +9,14 @@ public class Enemy : MonoBehaviour
     public GameObject deathPrefab;
     public GameObject damageText;
     public float health { get; set; }
-    Vector3 orginalPos;
-    private GameManager Manager;
+
+    private Vector3 orginalPos;
+    private GameManager manager;
+    public GameObject collectible;
     // Start is called before the first frame update
     private void Start()
     {
-        Manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+        manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
         player = GameObject.FindGameObjectWithTag("Player").transform;
         orginalPos = transform.position;
     }
@@ -29,7 +31,7 @@ public class Enemy : MonoBehaviour
 
     private void CheckInBounds()
     {
-        if (transform.position.y <=0)
+        if (transform.position.y <= 0)
         {
             transform.position = orginalPos;
         }
@@ -47,13 +49,15 @@ public class Enemy : MonoBehaviour
         if (collision.gameObject.CompareTag("Wall") || collision.gameObject.CompareTag("Player"))
         {
             Debug.LogError("health: " + health);
-            health -= Manager.decrementBy + Time.deltaTime;
+            manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
+            health -= manager.decrementBy + Time.deltaTime;
             if (health <= 0)
             {
                 SpawnDeath();
                 SelfDestruct();
-                Manager.currentLevelKill++;
-                Debug.LogError("Manager.currentLevelKill++ " + Manager.currentLevelKill);
+                SpawnCollectible();
+                manager.currentLevelKill++;
+                Debug.LogError("Manager.currentLevelKill++ " + manager.currentLevelKill);
             }
             else
             {
@@ -61,6 +65,11 @@ public class Enemy : MonoBehaviour
             }
             Debug.Log("Health: " + health);
         }
+    }
+
+    private void SpawnCollectible()
+    {
+        Instantiate(collectible, transform.position, Quaternion.identity);
     }
 
     private void SpawnDeath()

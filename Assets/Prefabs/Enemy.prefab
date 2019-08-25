@@ -131,6 +131,8 @@ MonoBehaviour:
     type: 3}
   damageText: {fileID: 3408843812737065566, guid: e664aafc080ee00408192a4509f1442d,
     type: 3}
+  collectible: {fileID: 4653133060688684368, guid: 755e269836a128842a04509fa0e132b7,
+    type: 3}
 --- !u!1 &2590862634531365348
 GameObject:
   m_ObjectHideFlags: 0

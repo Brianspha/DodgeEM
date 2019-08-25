@@ -589,9 +589,11 @@ MonoBehaviour:
   MaxZ: 0
   enemies:
   - {fileID: 2590862633532166465, guid: c9c479cc139f8c54a924e9c97798e7ac, type: 3}
+  - {fileID: 2590862633532166465, guid: 1438258b273695b4480e9648a5d52dfa, type: 3}
   gameOver: 0
   levelEnemyHealth: 0
   maxLevel: 10
+  currentLevelKill: 0
   EnemySpawners:
   - {fileID: 2097888388}
   - {fileID: 1369103963}

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Assets.Scripts;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -22,6 +23,7 @@ public class GameManager : MonoBehaviour
     public int currentLevelKill = 0;
     private int requiredKillLevel;
     public List<EnemySpawner> EnemySpawners;
+    public List<Collectible> collectibles;
     // Start is called before the first frame update
     private void Start()
     {
@@ -29,17 +31,19 @@ public class GameManager : MonoBehaviour
         level = 0;
         health = maxLife;
         levelIncrementor = 1;
+        collectibles = new List<Collectible>();
         NewLevel();
     }
 
     // Update is called once per frame
     private void Update()
     {
+        Debug.LogError("Current Collectibles: " + collectibles.Count);
         GameOver();
         if (gameOver)
         {
-            Debug.LogError("GameOver");
-            //NewLevel();
+            // Debug.LogError("GameOver");
+            NewLevel();
             gameOver = false;
             currentLevelKill = 0;
         }
@@ -48,8 +52,8 @@ public class GameManager : MonoBehaviour
     private void GameOver()
     {
         gameOver = currentLevelKill == requiredKillLevel;
-        Debug.LogError("Gameover: " + gameOver);
-        Debug.LogError("Current Kill: " + currentLevelKill);
+        //Debug.LogError("Gameover: " + gameOver);
+        Debug.LogError("Required Kills: " + requiredKillLevel);
     }
 
     public void NewLevel()
@@ -79,6 +83,6 @@ public class GameManager : MonoBehaviour
     public void DecrementHealth()
     {
         health--;
-        Debug.LogError("Player Health: " + health);
+        //Debug.LogError("Player Health: " + health);
     }
 }

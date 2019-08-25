@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts;
+using UnityEngine;
 
 public class CollisionDetection : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class CollisionDetection : MonoBehaviour
     private GameManager manager;
     private Vector2 originalPosition;
     public GameObject enemyDamage;
-    PlayerMovement Player;
+    private PlayerMovement Player;
     public void Start()
     {
         Debug.Log("start");
@@ -30,7 +31,19 @@ public class CollisionDetection : MonoBehaviour
             Ripple.Ripple();
             manager.IncrementScore();
         }
+        if (collision.gameObject.CompareTag("Collectible"))
+        {
+            DestroyCollectible(collision.gameObject);
+        }
     }
+
+    private void DestroyCollectible(GameObject collectible)
+    {
+        manager.collectibles.Add(new Collectible { Value = 100 });
+        Destroy(collectible);
+        Debug.LogError("Added Collectible");
+    }
+
     private void OnCollisionStay(Collision collision)
     {
         Debug.Log("Touching with: " + collision.gameObject.tag);
