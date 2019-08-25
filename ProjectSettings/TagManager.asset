@@ -4,8 +4,15 @@
 TagManager:
   serializedVersion: 2
   tags:
-  - CameraParent
   - Enemy
+  - CameraParent
+  - Gun
+  - Bullet
+  - EnemyGun
+  - Roof
+  - DestrutibleEnemy
+  - Wall
+  - PlayerEcho
   - GameManager
   layers:
   - Default
