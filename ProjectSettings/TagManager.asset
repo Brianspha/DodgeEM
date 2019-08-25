@@ -6,6 +6,7 @@ TagManager:
   tags:
   - CameraParent
   - Enemy
+  - GameManager
   layers:
   - Default
   - TransparentFX

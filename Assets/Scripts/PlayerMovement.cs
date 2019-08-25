@@ -84,9 +84,6 @@ public class PlayerMovement : MonoBehaviour
                 shaker.ShakeOnce(magn, rough, fadeIn, fadeOut);
             }
             LastPressed = -1;
-            
         }
-
-
     }
 }
