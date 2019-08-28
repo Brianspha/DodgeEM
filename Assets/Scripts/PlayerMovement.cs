@@ -1,5 +1,6 @@
 ﻿using EZCameraShake;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {

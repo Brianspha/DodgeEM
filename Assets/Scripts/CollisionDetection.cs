@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class CollisionDetection : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class CollisionDetection : MonoBehaviour
         if (collision.gameObject.CompareTag("Collectible"))
         {
             DestroyCollectible(collision.gameObject);
+            manager.emTokens += 1;
         }
     }
 

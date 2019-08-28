@@ -1,6 +1,8 @@
 ﻿using Assets.Scripts;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class GameManager : MonoBehaviour
@@ -22,8 +24,10 @@ public class GameManager : MonoBehaviour
     private readonly int defaultLevelKill = 1;
     public int currentLevelKill = 0;
     private int requiredKillLevel;
+    public int totalKills = 0,emTokens=0;
     public List<EnemySpawner> EnemySpawners;
     public List<Collectible> collectibles;
+    public Text kills,tokens;
     // Start is called before the first frame update
     private void Start()
     {
@@ -39,6 +43,7 @@ public class GameManager : MonoBehaviour
     private void Update()
     {
         Debug.LogError("Current Collectibles: " + collectibles.Count);
+        UpdateScore();
         GameOver();
         if (gameOver)
         {
@@ -47,6 +52,12 @@ public class GameManager : MonoBehaviour
             gameOver = false;
             currentLevelKill = 0;
         }
+    }
+
+    private void UpdateScore()
+    {
+        kills.text = totalKills.ToString();
+        tokens.text = emTokens.ToString();
     }
 
     private void GameOver()

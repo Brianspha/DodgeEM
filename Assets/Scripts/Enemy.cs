@@ -5,14 +5,12 @@ public class Enemy : MonoBehaviour
     public float defaultY;
     private Transform player;
     public float speed = 5;
-    public GameObject damagePrefab;
-    public GameObject deathPrefab;
-    public GameObject damageText;
+    public GameObject damagePrefab, deathPrefab, damageText, collectible;
     public float health { get; set; }
 
     private Vector3 orginalPos;
     private GameManager manager;
-    public GameObject collectible;
+    public Vector3 center;
     // Start is called before the first frame update
     private void Start()
     {
@@ -51,8 +49,10 @@ public class Enemy : MonoBehaviour
             Debug.LogError("health: " + health);
             manager = GameObject.FindGameObjectWithTag("GameManager").GetComponent<GameManager>();
             health -= manager.decrementBy + Time.deltaTime;
+            manager.totalKills += 1;
             if (health <= 0)
             {
+                SpawnDamageText();
                 SpawnDeath();
                 SelfDestruct();
                 SpawnCollectible();
@@ -65,6 +65,12 @@ public class Enemy : MonoBehaviour
             }
             Debug.Log("Health: " + health);
         }
+    }
+
+    private void SpawnDamageText()
+    {
+        Instantiate(damageText, center, damageText.transform.rotation);
+        Debug.LogError("Spawned damageText");
     }
 
     private void SpawnCollectible()
