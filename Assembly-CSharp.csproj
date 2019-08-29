@@ -79,10 +79,12 @@
     <Compile Include="Assets\Scripts\EnemyGun.cs" />
     <Compile Include="Assets\Scripts\EnemySpawner.cs" />
     <Compile Include="Assets\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Scripts\Helpers\Variables.cs" />
     <Compile Include="Assets\Scripts\PlayerMovement.cs" />
     <Compile Include="Assets\Scripts\RippleEffect.cs" />
     <Compile Include="Assets\Scripts\RipplePostProcessor.cs" />
     <Compile Include="Assets\Scripts\SelfDestruct.cs" />
+    <Compile Include="Assets\Scripts\UIButtonsHandler.cs" />
     <None Include="Assets\Shaders\Ripple.shader" />
     <Reference Include="Unity.Timeline.Editor">
       <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Library/ScriptAssemblies/Unity.Timeline.Editor.dll</HintPath>
