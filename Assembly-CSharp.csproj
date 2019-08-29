@@ -329,6 +329,105 @@
     <Reference Include="Unity.Analytics.Tracker">
       <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Library/PackageCache/com.unity.analytics@3.3.2/Unity.Analytics.Tracker.dll</HintPath>
     </Reference>
+    <Reference Include="System.Security.Cryptography.Algorithms">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/System.Security.Cryptography.Algorithms.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.RPC">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.RPC.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.Accounts">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.Accounts.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.Model">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.Model.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.JsonRpc.WebSocketClient">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.JsonRpc.WebSocketClient.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.X509Certificates">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/System.Security.Cryptography.X509Certificates.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.Geth">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.Geth.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Extensions.Logging.Abstractions">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Microsoft.Extensions.Logging.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.RLP">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.RLP.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.ABI">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.ABI.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.JsonRpc.Client">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.JsonRpc.Client.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Encoding">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/System.Security.Cryptography.Encoding.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.KeyStore">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.KeyStore.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.StandardTokenEIP20">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.StandardTokenEIP20.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.Util">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.Util.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Buffers">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Cryptography.Primitives">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/System.Security.Cryptography.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.IO.Pipes">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/System.IO.Pipes.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Numerics">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/System.Numerics.dll</HintPath>
+    </Reference>
+    <Reference Include="Common.Logging.Core">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Common.Logging.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.Quorum">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.Quorum.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.Contracts">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.Contracts.dll</HintPath>
+    </Reference>
+    <Reference Include="BouncyCastle.Crypto">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/BouncyCastle.Crypto.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.JsonRpc.RpcClient">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.JsonRpc.RpcClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.Hex">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.Hex.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.JsonRpc.IpcClient">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.JsonRpc.IpcClient.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.Parity">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.Parity.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.HdWallet">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.HdWallet.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.Unity">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.Unity.dll</HintPath>
+    </Reference>
+    <Reference Include="NBitcoin">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/NBitcoin.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.Signer">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.Signer.dll</HintPath>
+    </Reference>
+    <Reference Include="Nethereum.Web3">
+      <HintPath>C:/Users/g14m1190/Documents/GitHub/DodgeEM/Assets/Plugins/Nethereum/Nethereum.Web3.dll</HintPath>
+    </Reference>
     <Reference Include="netstandard">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.1.8f1/Editor/Data/NetStandard/ref/2.0.0/netstandard.dll</HintPath>
     </Reference>
