@@ -1069,7 +1069,7 @@ MonoBehaviour:
   levelEnemyHealth: 0
   maxLevel: 10
   currentLevelKill: 0
-  totalKills: 99
+  totalKills: 95
   emTokens: 0
   EnemySpawners:
   - {fileID: 2097888388}
@@ -1131,7 +1131,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 0.19607843, g: 0.19607843, b: 0.19607843, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
@@ -1147,9 +1147,9 @@ MonoBehaviour:
     m_MaxSize: 40
     m_Alignment: 0
     m_AlignByGeometry: 0
-    m_RichText: 0
+    m_RichText: 1
     m_HorizontalOverflow: 1
-    m_VerticalOverflow: 0
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: 
 --- !u!222 &822575805
@@ -1768,7 +1768,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caba09874bb148645925bafa54098b61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  addressField: {fileID: 0}
+  addressField: {fileID: 881898982}
 --- !u!1 &1167740884
 GameObject:
   m_ObjectHideFlags: 0
@@ -2072,7 +2072,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caba09874bb148645925bafa54098b61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  addressField: {fileID: 822575804}
+  addressField: {fileID: 881898982}
 --- !u!1 &1330210915
 GameObject:
   m_ObjectHideFlags: 0
@@ -2140,8 +2140,8 @@ MonoBehaviour:
     m_Alignment: 0
     m_AlignByGeometry: 0
     m_RichText: 1
-    m_HorizontalOverflow: 0
-    m_VerticalOverflow: 0
+    m_HorizontalOverflow: 1
+    m_VerticalOverflow: 1
     m_LineSpacing: 1
   m_Text: Ethereum Address
 --- !u!222 &1330210918
@@ -2561,7 +2561,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: caba09874bb148645925bafa54098b61, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  addressField: {fileID: 0}
+  addressField: {fileID: 881898982}
 --- !u!1 &1541251246
 GameObject:
   m_ObjectHideFlags: 0

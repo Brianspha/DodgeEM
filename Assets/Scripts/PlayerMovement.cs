@@ -14,6 +14,7 @@ public class PlayerMovement : MonoBehaviour
     public float magn = 1000, rough = 500, fadeIn = 1f, fadeOut = 2f;
     public float defaultY;
     Vector3 defaultPos;
+    public bool canMove = true;
     private void Start()
     {
         shaker = Camera.main.GetComponent<CameraShaker>();
@@ -28,70 +29,76 @@ public class PlayerMovement : MonoBehaviour
 
     private void Move()
     {
-        if(transform.position.y <= 0)
+        if (!canMove)
         {
-            transform.position = defaultPos;
+            return;
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
-        {
-            MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x - 1, transform.position.y,transform.position.z), Time.deltaTime * Speed);
-            if (MoveVector.x >= MinX)
+        else {
+            if (transform.position.y <= 0)
             {
-                transform.position = MoveVector;
-                LastPressed = 0;
+                transform.position = defaultPos;
             }
+            if (Input.GetKey(KeyCode.LeftArrow))
+            {
+                MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x - 1, transform.position.y, transform.position.z), Time.deltaTime * Speed);
+                if (MoveVector.x >= MinX)
+                {
+                    transform.position = MoveVector;
+                    LastPressed = 0;
+                }
+            }
+            if (Input.GetKey(KeyCode.RightArrow))
+            {
+                MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x + 1, transform.position.y, transform.position.z), Time.deltaTime * Speed);
+                if (MoveVector.x <= MaxX)
+                {
+                    transform.position = MoveVector;
+                    LastPressed = 1;
+                }
+            }
+            if (Input.GetKey(KeyCode.UpArrow))
+            {
+                MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z + 1), Time.deltaTime * Speed);
+                if (MoveVector.z <= MaxZ)
+                {
+                    transform.position = MoveVector;
+                    LastPressed = 2;
+                }
+            }
+            if (Input.GetKey(KeyCode.DownArrow))
+            {
+                MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1), Time.deltaTime * Speed);
+                if (MoveVector.z >= MinZ)
+                {
+                    transform.position = MoveVector;
+                    LastPressed = 3;
+                }
+            }
+            if (Input.GetKey(KeyCode.Space))
+            {
+                switch (LastPressed)
+                {
+                    case 0:
+                        MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x - SmashHit, transform.position.y, transform.position.z), Time.deltaTime * SmashHit);
+                        break;
+                    case 1:
+                        MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x + SmashHit, transform.position.y, transform.position.z), Time.deltaTime * SmashHit);
+                        break;
+                    case 2:
+                        MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z + SmashHit), Time.deltaTime * SmashHit);
+                        break;
+                    case 3:
+                        MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z - SmashHit), Time.deltaTime * SmashHit);
+                        break;
+                }
+                if (MoveVector.z >= MinZ && MoveVector.z <= MaxZ && MoveVector.x <= MaxX && MoveVector.x >= MinX)
+                {
+                    transform.position = MoveVector;
+                    shaker.ShakeOnce(magn, rough, fadeIn, fadeOut);
+                }
+                transform.position = new Vector3(transform.position.x, defaultY, transform.position.z);
+            }
+            LastPressed = -1;
         }
-        if (Input.GetKey(KeyCode.RightArrow))
-        {
-            MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x + 1, transform.position.y, transform.position.z), Time.deltaTime * Speed);
-            if (MoveVector.x <= MaxX)
-            {
-                transform.position = MoveVector;
-                LastPressed = 1;
-            }
-        }
-         if (Input.GetKey(KeyCode.UpArrow))
-        {
-            MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z + 1), Time.deltaTime * Speed);
-            if (MoveVector.z <= MaxZ)
-            {
-                transform.position = MoveVector;
-                LastPressed = 2;
-            }
-        }
-         if (Input.GetKey(KeyCode.DownArrow))
-        {
-            MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z - 1), Time.deltaTime * Speed);
-            if (MoveVector.z >= MinZ)
-            {
-                transform.position = MoveVector;
-                LastPressed = 3;
-            }
-        }
-         if (Input.GetKey(KeyCode.Space))
-        {
-            switch (LastPressed)
-            {
-                case 0:
-                    MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x - SmashHit, transform.position.y,transform.position.z), Time.deltaTime * SmashHit);
-                    break;
-                case 1:
-                    MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x + SmashHit, transform.position.y,transform.position.z), Time.deltaTime * SmashHit);
-                    break;
-                case 2:
-                    MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z + SmashHit), Time.deltaTime * SmashHit);
-                    break;
-                case 3:
-                    MoveVector = Vector3.MoveTowards(transform.position, new Vector3(transform.position.x, transform.position.y, transform.position.z - SmashHit), Time.deltaTime * SmashHit);
-                    break;
-            }
-            if (MoveVector.z >= MinZ && MoveVector.z <= MaxZ && MoveVector.x <= MaxX && MoveVector.x >= MinX)
-            {
-                transform.position = MoveVector;
-                shaker.ShakeOnce(magn, rough, fadeIn, fadeOut);
-            }
-            transform.position = new Vector3(transform.position.x, defaultY, transform.position.z);
-        }
-        LastPressed = -1;
     }
 }

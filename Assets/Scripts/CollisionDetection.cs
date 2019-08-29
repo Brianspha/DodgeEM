@@ -41,9 +41,9 @@ public class CollisionDetection : MonoBehaviour
 
     private void DestroyCollectible(GameObject collectible)
     {
-        manager.collectibles.Add(new Collectible { Value = 100 });
+        manager.emTokens++;
         Destroy(collectible);
-        Debug.LogError("Added Collectible");
+        Debug.LogError("Total EMtokens: " + manager.emTokens);
     }
 
     private void OnCollisionStay(Collision collision)

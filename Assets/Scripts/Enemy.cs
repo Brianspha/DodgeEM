@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class Enemy : MonoBehaviour
 {
@@ -22,9 +23,18 @@ public class Enemy : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
+        CheckGameOver();
         MoveTowardsPlayer();
         CheckInBounds();
         transform.position = new Vector3(transform.position.x, defaultY, transform.position.z);
+    }
+
+    private void CheckGameOver()
+    {
+        if (manager.newLevel)
+        {
+            SelfDestruct();
+        }
     }
 
     private void CheckInBounds()
@@ -55,7 +65,10 @@ public class Enemy : MonoBehaviour
                 SpawnDamageText();
                 SpawnDeath();
                 SelfDestruct();
-                SpawnCollectible();
+                if (manager.totalDodgeEMTokens > 0)
+                {
+                    SpawnCollectible();
+                }
                 manager.currentLevelKill++;
                 Debug.LogError("Manager.currentLevelKill++ " + manager.currentLevelKill);
             }

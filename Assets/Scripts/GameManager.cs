@@ -1,6 +1,9 @@
-﻿using Assets.Scripts;
-using System;
+﻿using Nethereum.Contracts;
+using Nethereum.JsonRpc.UnityClient;
+using Nethereum.RPC.Eth.DTOs;
+using System.Collections;
 using System.Collections.Generic;
+using System.Numerics;
 using UnityEngine;
 using UnityEngine.UI;
 using Random = UnityEngine.Random;
@@ -18,8 +21,7 @@ public class GameManager : MonoBehaviour
     private readonly float maxLife = 10;
     public bool newLevel = false;
     private readonly float defaultY = .5f;
-
-
+    public BigInteger totalDodgeEMTokens;//@dev initially 0 but will be updated as soon as the game starts from token contract value
     public float levelEnemyHealth;
     private readonly float defaultLevelEnemyHealth = 2;
     public int maxLevel = 10;
@@ -28,10 +30,17 @@ public class GameManager : MonoBehaviour
     private int requiredKillLevel;
     public int totalKills = 0, emTokens = 0;
     public List<EnemySpawner> EnemySpawners;
-    public List<Collectible> collectibles;
     public Text kills, tokens;
     public GameObject continuePrefab, transferPrefab;
     public bool carryOn;
+    public Contract DodgeEMToken;
+    public EthCallUnityRequest EthCallUnityRequest;
+    private PlayerMovement player;
+    public int tokenMultiplier = 100;
+
+    public TransactionReceiptPollingRequest TransactionReceiptPollingRequest { get; private set; }
+
+    public TransactionSignedUnityRequest TransactionSignedUnityRequest;
     // Start is called before the first frame update
     private void Start()
     {
@@ -39,8 +48,12 @@ public class GameManager : MonoBehaviour
         level = 0;
         health = maxLife;
         levelIncrementor = 1;
-        collectibles = new List<Collectible>();
-        CreateLevel();
+        TransactionSignedUnityRequest = new TransactionSignedUnityRequest(Variables.NodeAddress, Variables.PrivateKey);
+        EthCallUnityRequest = new EthCallUnityRequest(Variables.NodeAddress);
+        TransactionReceiptPollingRequest = new TransactionReceiptPollingRequest(Variables.NodeAddress);
+        DodgeEMToken = new Contract(null, Variables.ABI, Variables.ContractAddress);
+        player = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
+        StartCoroutine(GetTokenOwnerBalance());
     }
 
     // Update is called once per frame
@@ -50,6 +63,7 @@ public class GameManager : MonoBehaviour
         GameOver();
         if (newLevel)
         {
+            player.canMove = false;
             SpawnContinuePrefab();
         }
     }
@@ -74,11 +88,15 @@ public class GameManager : MonoBehaviour
     public void ShowTransferUI()
     {
         transferPrefab.SetActive(true);
-        continuePrefab.SetActive(false);
+        DeactivateContinuePrefab();
     }
-    public void DestroyContinuePrefab()
+    public void DeactivateContinuePrefab()
     {
         continuePrefab.SetActive(false);
+    }
+    public void DeactivateTransferPrefab()
+    {
+        transferPrefab.SetActive(false);
     }
     public void CreateLevel()
     {
@@ -98,6 +116,10 @@ public class GameManager : MonoBehaviour
             spawner.SetEnemies(levelEnemies);
         }
         levelIncrementor += 1;
+        player.canMove = true;
+        DeactivateContinuePrefab();
+        DeactivateTransferPrefab();
+
     }
     public void IncrementScore()
     {
@@ -107,4 +129,47 @@ public class GameManager : MonoBehaviour
     {
         health--;
     }
+
+    /// <summary>
+    /// Get the function which allows us to check the token owners balance
+    /// which will aid in determining how many tokens we spawn in game
+    /// </summary>
+    /// <returns>Function</returns>
+    public Function GetBalanceOfFunction()
+    {
+        return DodgeEMToken.GetFunction("balanceOf");
+    }
+    /// <summary>
+    /// Creates paramaters fr the Balanceof function
+    /// </summary>
+    /// <returns></returns>
+    public CallInput GetBalanceOfCallInput(string address)
+    {
+        return GetBalanceOfFunction().CreateCallInput(new object[] { address });
+    }
+    private int DecodeTokenOwnerBalance(string result)
+    {
+        return GetBalanceOfFunction().DecodeSimpleTypeOutput<int>(result);
+    }
+    public IEnumerator GetTokenOwnerBalance()
+    {
+        yield return EthCallUnityRequest.SendRequest(GetBalanceOfCallInput(Variables.tokenOwnerAddress), BlockParameter.CreateLatest());
+        if (EthCallUnityRequest.Result != null)
+        {
+            BigInteger balance = GetBalanceOfFunction().DecodeSimpleTypeOutput<BigInteger>(EthCallUnityRequest.Result);
+            Debug.LogError("Balance: " + balance);
+            totalDodgeEMTokens = balance;
+            CreateLevel();
+        }
+        else
+        {
+            Debug.LogError(EthCallUnityRequest.Exception);
+            Debug.LogError(EthCallUnityRequest.Result);
+            Debug.LogError(EthCallUnityRequest);
+
+
+        }
+
+    }
+
 }
