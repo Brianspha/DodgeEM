@@ -1,56 +1,27 @@
-pragma solidity ^0.4.21;
+pragma solidity ^0.5.0;
 
-import "./Proxy.sol";
+import './BaseUpgradeabilityProxy.sol';
 
 /**
  * @title UpgradeabilityProxy
- * @dev This contract represents a proxy where the implementation address to which it will delegate can be upgraded
+ * @dev Extends BaseUpgradeabilityProxy with a constructor for initializing
+ * implementation and init data.
  */
-contract UpgradeabilityProxy is Proxy {
+contract UpgradeabilityProxy is BaseUpgradeabilityProxy {
   /**
-   * @dev This event will be emitted every time the implementation gets upgraded
-   * @param implementation representing the address of the upgraded implementation
+   * @dev Contract constructor.
+   * @param _logic Address of the initial implementation.
+   * @param _data Data to send as msg.data to the implementation to initialize the proxied contract.
+   * It should include the signature and the parameters of the function to be called, as described in
+   * https://solidity.readthedocs.io/en/v0.4.24/abi-spec.html#function-selector-and-argument-encoding.
+   * This parameter is optional, if no data is given the initialization call to proxied contract will be skipped.
    */
-  event Upgraded(address indexed implementation);
-
-  // Storage position of the address of the current implementation
-  bytes32 private constant implementationPosition = keccak256("org.zeppelinos.proxy.implementation");
-
-  /**
-   * @dev Constructor function
-   */
-  function UpgradeabilityProxy() public {}
-
-  /**
-   * @dev Tells the address of the current implementation
-   * @return address of the current implementation
-   */
-  function implementation() public view returns (address impl) {
-    bytes32 position = implementationPosition;
-    assembly {
-      impl := sload(position)
+  constructor(address _logic, bytes memory _data) public payable {
+    assert(IMPLEMENTATION_SLOT == bytes32(uint256(keccak256('eip1967.proxy.implementation')) - 1));
+    _setImplementation(_logic);
+    if(_data.length > 0) {
+      (bool success,) = _logic.delegatecall(_data);
+      require(success);
     }
-  }
-
-  /**
-   * @dev Sets the address of the current implementation
-   * @param newImplementation address representing the new implementation to be set
-   */
-  function setImplementation(address newImplementation) internal {
-    bytes32 position = implementationPosition;
-    assembly {
-      sstore(position, newImplementation)
-    }
-  }
-
-  /**
-   * @dev Upgrades the implementation address
-   * @param newImplementation representing the address of the new implementation to be set
-   */
-  function _upgradeTo(address newImplementation) internal {
-    address currentImplementation = implementation();
-    require(currentImplementation != newImplementation);
-    setImplementation(newImplementation);
-    emit Upgraded(newImplementation);
-  }
+  }  
 }

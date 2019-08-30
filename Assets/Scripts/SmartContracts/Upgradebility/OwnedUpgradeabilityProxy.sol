@@ -1,4 +1,4 @@
-pragma solidity >= 0.5 .9;
+pragma solidity >= 0.5.0;
 
 import "./UpgradeabilityProxy.sol";
 
@@ -20,7 +20,7 @@ contract OwnedUpgradeabilityProxy is UpgradeabilityProxy {
   /**
    * @dev the constructor sets the original owner of the contract to the sender account.
    */
-  function OwnedUpgradeabilityProxy() public {
+  constructor() public {
     setUpgradeabilityOwner(msg.sender);
   }
 
@@ -78,8 +78,9 @@ contract OwnedUpgradeabilityProxy is UpgradeabilityProxy {
    * @param data represents the msg.data to bet sent in the low level call. This parameter may include the function
    * signature of the implementation to be called with the needed payload
    */
-  function upgradeToAndCall(address implementation, bytes data) payable public onlyProxyOwner {
+  function upgradeToAndCall(address implementation, bytes memory data) payable public onlyProxyOwner {
     upgradeTo(implementation);
-    require(this.call.value(msg.value)(data));
+    (bool success, ) = implementation.delegatecall(data);
+    require(success);
   }
 }
